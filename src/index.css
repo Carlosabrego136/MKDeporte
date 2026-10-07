@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -12,12 +11,183 @@ body,
   margin: 0;
   overflow: hidden;
   background: #000;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
 }
 
 .gpu {
   will-change: transform;
   transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
+}
+
+/* ---------- HERO ---------- */
+.parallax-layer {
+  scale: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .parallax-layer {
+    scale: 1.08; /* margen para el parallax; en táctil no hace falta */
+  }
+}
+
+/*
+ * Tamaño de los títulos calculado con el ancho REAL de Anton:
+ * "DEPORTE" 2.97em + "DEPORTIVA" 3.69em = 6.66em (con tracking -0.025em).
+ * Se divide entre 6.9 para dejar margen. Nunca se recorta ni choca con el botón.
+ */
+.hero-ui {
+  --pad: 1.5rem;
+  --title: clamp(
+    2rem,
+    min(calc((100vw - 2 * var(--pad) - 1rem) / 6.9), 15dvh),
+    5rem
+  );
+  padding: max(var(--pad), env(safe-area-inset-top))
+    max(var(--pad), env(safe-area-inset-right))
+    max(var(--pad), env(safe-area-inset-bottom))
+    max(var(--pad), env(safe-area-inset-left));
+}
+@media (min-width: 640px) {
+  .hero-ui {
+    --pad: 3rem;
+  }
+}
+@media (min-width: 768px) {
+  .hero-ui {
+    --pad: 4rem;
+    /* 12rem = botón (9rem) + holgura a los lados */
+    --title: clamp(
+      2.5rem,
+      min(calc((100vw - 2 * var(--pad) - 12rem) / 6.9), 17dvh),
+      11rem
+    );
+  }
+}
+@media (max-height: 500px) {
+  .hero-ui {
+    --pad: 1.25rem;
+  }
+}
+
+.hero-title {
+  font-size: var(--title);
+  line-height: 1;
+  letter-spacing: -0.025em;
+}
+
+.hero-start {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 20;
+  bottom: calc(
+    max(var(--pad), env(safe-area-inset-bottom)) + 2 * var(--title) + 1.25rem
+  );
+}
+@media (min-width: 768px) {
+  .hero-start {
+    bottom: 0.5rem;
+  }
+}
+
+/* ---------- PANTALLA 2 ---------- */
+.collection-header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  z-index: 40;
+  padding: max(1.75rem, calc(env(safe-area-inset-top) + 0.75rem)) 1rem 0.5rem;
+}
+
+/* El "stage" es un contenedor: las tarjetas se miden con cqw/cqh y siempre caben. */
+.stage {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  container-type: size;
+  margin-bottom: env(safe-area-inset-bottom);
+}
+
+/*
+ * Ancho visible del mazo = 3w - 2*solape + 0.48w (por la rotación de ±8°).
+ * Escritorio: solape 33% -> 2.82w.  Móvil: solape 60% -> 2.28w.
+ * Se reserva 7.5rem para el desplazamiento al hacer hover.
+ */
+.deck {
+  --card-w: min(
+    24rem,
+    calc((94cqw - 7.5rem) / 2.82),
+    calc(76cqh * 0.5625)
+  );
+  --overlap: calc(var(--card-w) * 0.33);
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 639px) {
+  .deck {
+    --card-w: min(41cqw, calc(76cqh * 0.5625));
+    --overlap: calc(var(--card-w) * 0.6);
+  }
+}
+.deck-card {
+  width: var(--card-w);
+  flex: none;
+}
+.deck-card--left {
+  margin-right: calc(var(--overlap) * -1);
+}
+.deck-card--right {
+  margin-left: calc(var(--overlap) * -1);
+}
+.deck-card--center {
+  scale: 1.05;
+}
+
+/* "COLECCIÓN" = 3.93em, "COLECCIÓN #451" = 6.03em en Anton: se ajusta al 94% del ancho. */
+.giant {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 10;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  line-height: 0.9;
+  font-size: calc(94cqw / 4);
+}
+.giant span {
+  display: block;
+}
+@media (min-width: 640px) {
+  .giant {
+    top: 50%;
+    translate: 0 calc(-50% + 1rem);
+    line-height: 1;
+    font-size: calc(94cqw / 6.1);
+  }
+  .giant span {
+    display: inline;
+  }
+}
+
+/* ---------- CATÁLOGO ---------- */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

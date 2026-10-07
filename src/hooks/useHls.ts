@@ -3,8 +3,10 @@ import type HlsType from "hls.js";
 
 /**
  * Conecta un stream HLS a un <video>.
- * - Safari/iOS: HLS nativo (no descarga hls.js).
- * - Resto: importa hls.js de forma dinámica (chunk separado).
+ * - Safari/iOS: HLS nativo (no descarga hls.js). Se considera "listo" de inmediato
+ *   porque iOS no carga nada hasta que se llama a play().
+ * - Resto: importa hls.js de forma dinámica (chunk separado) y marca "listo"
+ *   al parsear el manifiesto.
  * - `enabled=false` no hace nada (carga diferida bajo demanda).
  * Limpia todo al desmontar o cambiar de fuente.
  */
@@ -24,11 +26,9 @@ export function useHls(
     let hls: HlsType | null = null;
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      const onReady = () => setIsReady(true);
-      video.addEventListener("loadedmetadata", onReady, { once: true });
       video.src = src;
+      setIsReady(true);
       return () => {
-        video.removeEventListener("loadedmetadata", onReady);
         video.removeAttribute("src");
         video.load();
         setIsReady(false);

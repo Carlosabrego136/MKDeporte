@@ -83,6 +83,12 @@ const Slide = memo(function Slide({
 export function SlideCarousel({ videosOn }: { videosOn: boolean }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [hasSwiped, setHasSwiped] = useState(false);
+
+  // La flecha de "desliza" se oculta en cuanto la persona cambia de tarjeta.
+  useEffect(() => {
+    if (active !== 0) setHasSwiped(true);
+  }, [active]);
 
   // La activa es la que se ve en ≥60%. Un solo observer, se desconecta al desmontar.
   useEffect(() => {
@@ -111,7 +117,7 @@ export function SlideCarousel({ videosOn }: { videosOn: boolean }) {
   }, []);
 
   return (
-    <>
+    <div className="carousel-root">
       <div ref={trackRef} className="carousel" aria-roledescription="carrusel">
         {DECK.map((card, i) => {
           const item = CATALOG.find((c) => c.id === card.itemId);
@@ -130,6 +136,18 @@ export function SlideCarousel({ videosOn }: { videosOn: boolean }) {
         })}
       </div>
 
+      <div className="swipe-hint" data-hidden={hasSwiped} aria-hidden="true">
+        <div className="swipe-pill">
+          <svg viewBox="0 0 24 24" className="nudge-l" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+          <span>DESLIZA</span>
+          <svg viewBox="0 0 24 24" className="nudge-r" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </div>
+
       <div className="carousel-dots" role="tablist" aria-label="Prendas">
         {DECK.map((card, i) => (
           <button
@@ -145,6 +163,6 @@ export function SlideCarousel({ videosOn }: { videosOn: boolean }) {
           />
         ))}
       </div>
-    </>
+    </div>
   );
 }

@@ -71,6 +71,36 @@ body,
   }
 }
 
+/*
+ * Celulares verticales: el video ocupa el 80% del alto (centrado) y se funde a negro arriba y
+ * abajo. Así se ve más de la escena (menos zoom) sin barras duras. Escritorio/tablet no cambian.
+ */
+.hero-fade {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 15dvh;
+  z-index: 1;
+  pointer-events: none;
+}
+.hero-fade--top {
+  top: 10dvh;
+  background: linear-gradient(to bottom, #000, transparent);
+}
+.hero-fade--bottom {
+  bottom: 10dvh;
+  background: linear-gradient(to top, #000, transparent);
+}
+@media (max-width: 639px) and (orientation: portrait) {
+  .parallax-layer {
+    inset: 10dvh 0;
+  }
+  .hero-fade {
+    display: block;
+  }
+}
+
 .hero-title {
   font-size: var(--title);
   line-height: 1;
@@ -161,8 +191,13 @@ body,
  * Carrusel de celular: una tarjeta grande al centro, las vecinas asoman a los lados.
  * Ancho = 72% del ancho, o lo que permita el alto (nunca se corta).
  */
+.carousel-root {
+  /* 74cqh deja sitio arriba de la tarjeta para la flecha de "desliza" */
+  --slide-w: min(72cqw, calc(74cqh * 0.5625));
+  position: absolute;
+  inset: 0;
+}
 .carousel {
-  --slide-w: min(72cqw, calc(78cqh * 0.5625));
   position: absolute;
   inset: 0;
   z-index: 20;
@@ -195,6 +230,88 @@ body,
   scale: 1;
   opacity: 1;
 }
+/* Pastilla "DESLIZA" con flechas que se mueven, justo encima de la tarjeta activa. */
+.swipe-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(50% - (var(--slide-w) / 0.5625) / 2 - 2.9rem);
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    visibility 0s linear 0s;
+}
+.swipe-hint[data-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.4s ease,
+    visibility 0s linear 0.4s;
+}
+.swipe-hint[data-hidden="true"] * {
+  animation-play-state: paused;
+}
+.swipe-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.5);
+  color: #fff;
+  font-family: var(--font-anton);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  line-height: 1;
+}
+.swipe-pill svg {
+  display: block;
+  width: 0.85rem;
+  height: 0.85rem;
+}
+.nudge-l {
+  animation: nudge-l 1.4s ease-in-out infinite;
+}
+.nudge-r {
+  animation: nudge-r 1.4s ease-in-out infinite;
+}
+@keyframes nudge-l {
+  0%,
+  100% {
+    translate: 0 0;
+    opacity: 0.55;
+  }
+  50% {
+    translate: -4px 0;
+    opacity: 1;
+  }
+}
+@keyframes nudge-r {
+  0%,
+  100% {
+    translate: 0 0;
+    opacity: 0.55;
+  }
+  50% {
+    translate: 4px 0;
+    opacity: 1;
+  }
+}
+@media (max-height: 520px) {
+  .swipe-hint {
+    display: none; /* en horizontal no hay sitio arriba y las vecinas ya se ven */
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nudge-l,
+  .nudge-r {
+    animation: none;
+  }
+}
+
 .carousel-dots {
   position: absolute;
   inset-inline: 0;

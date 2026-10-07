@@ -122,6 +122,8 @@ function HeroScreenBase({
           }`}
         />
       </div>
+      <div className="hero-fade hero-fade--top" aria-hidden="true" />
+      <div className="hero-fade hero-fade--bottom" aria-hidden="true" />
       <div className="pointer-events-none absolute inset-0 bg-black/10" />
 
       <div className="hero-ui pointer-events-none absolute inset-0 z-10 flex flex-col justify-between">

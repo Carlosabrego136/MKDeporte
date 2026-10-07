@@ -14,10 +14,13 @@ interface HeroScreenProps {
   videoRef: RefObject<HTMLVideoElement | null>;
   isPlaying: boolean;
   onStart: () => void;
+  /** Termina el video (o se salta): pasa a la colección. */
   onEnded: () => void;
 }
 
 const MAX_PARALLAX = 20;
+/** Si el video no arranca en este tiempo tras pulsar, se pasa a la colección. */
+const START_TIMEOUT_MS = 10000;
 
 function HeroScreenBase({
   videoRef,
@@ -28,7 +31,9 @@ function HeroScreenBase({
   const containerRef = useRef<HTMLDivElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
   const [hasPlayed, setHasPlayed] = useState(false);
-  const isReady = useHls(videoRef, HERO_VIDEO_URL);
+  const [started, setStarted] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const isReady = useHls(videoRef, HERO_VIDEO_URL, true, () => setFailed(true));
 
   // Parallax solo con puntero fino (escritorio). Sin estado de React: rAF + transform (GPU).
   useEffect(() => {
@@ -68,6 +73,21 @@ function HeroScreenBase({
     }
   }, [isPlaying, isReady, videoRef]);
 
+  // Nunca dejar al usuario atascado: si el video falla o no arranca, pasa a la colección.
+  useEffect(() => {
+    if (!isPlaying) {
+      setStarted(false);
+      return;
+    }
+    if (failed) {
+      onEnded();
+      return;
+    }
+    if (started) return;
+    const t = window.setTimeout(onEnded, START_TIMEOUT_MS);
+    return () => window.clearTimeout(t);
+  }, [isPlaying, started, failed, onEnded]);
+
   return (
     <div
       ref={containerRef}
@@ -91,8 +111,12 @@ function HeroScreenBase({
           playsInline
           disablePictureInPicture
           preload="auto"
-          onPlaying={() => setHasPlayed(true)}
+          onPlaying={() => {
+            setHasPlayed(true);
+            setStarted(true);
+          }}
           onEnded={onEnded}
+          onError={() => setFailed(true)}
           className={`absolute inset-0 h-full w-full origin-center object-cover transition-opacity duration-1000 ease-in-out ${
             hasPlayed ? "opacity-100" : "opacity-0"
           }`}
@@ -143,30 +167,52 @@ function HeroScreenBase({
           </motion.div>
         </div>
 
-        <AnimatePresence>
-          {!isPlaying && (
-            <motion.div
-              key="start"
-              className="hero-start gpu pointer-events-auto"
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ duration: 0.8, ease: EASE_BOUNCE }}
-            >
-              <button
-                type="button"
-                onClick={onStart}
-                aria-label="Ver colección"
-                className="group relative flex h-28 w-28 cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-full border border-white/20 bg-black/90 font-anton text-xs tracking-widest text-white shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:bg-black sm:h-32 sm:w-32 sm:text-sm md:h-36 md:w-36"
+        {/* Botón central "VER COLECCIÓN" */}
+        <div className="hero-start">
+          <AnimatePresence>
+            {!isPlaying && (
+              <motion.div
+                key="start"
+                className="gpu pointer-events-auto"
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ duration: 0.8, ease: EASE_BOUNCE }}
               >
-                <span className="absolute inset-0 bg-radial from-white/10 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="relative z-10 text-center leading-tight font-bold tracking-wider">
-                  {TEXT.start[0]}
-                  <br />
-                  {TEXT.start[1]}
-                </span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <button
+                  type="button"
+                  onClick={onStart}
+                  aria-label="Ver colección"
+                  className="group relative flex h-28 w-28 cursor-pointer flex-col items-center justify-center gap-1 overflow-hidden rounded-full border border-white/20 bg-black/90 font-anton text-xs tracking-widest text-white shadow-[0_0_50px_rgba(0,0,0,0.8)] transition-all duration-300 hover:border-white/40 hover:bg-black sm:h-32 sm:w-32 sm:text-sm md:h-36 md:w-36"
+                >
+                  <span className="absolute inset-0 bg-radial from-white/10 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-100" />
+                  <span className="relative z-10 text-center leading-tight font-bold tracking-wider">
+                    {TEXT.start[0]}
+                    <br />
+                    {TEXT.start[1]}
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Botón "SALTAR" mientras corre el video */}
+        <div className="hero-skip">
+          <AnimatePresence>
+            {isPlaying && (
+              <motion.button
+                key="skip"
+                type="button"
+                onClick={onEnded}
+                className="pointer-events-auto cursor-pointer rounded-full border border-white/40 bg-black/40 px-6 py-2.5 font-anton text-sm tracking-widest text-white transition-colors hover:bg-black/60 active:scale-95"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { delay: 1.2, duration: 0.5 } }}
+                exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              >
+                {TEXT.skip}
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

@@ -17,11 +17,15 @@ interface CatalogPageProps {
 }
 
 const WIDTHS = [600, 900, 1260] as const;
+/** Las primeras fotos (lo que se ve al abrir) cargan de inmediato; el resto, al acercarse. */
+const EAGER_COUNT = 4;
 
 const CatalogItemCard = memo(function CatalogItemCard({
   item,
+  eager,
 }: {
   item: CatalogItem;
+  eager: boolean;
 }) {
   const waHref = WHATSAPP_NUMBER
     ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -30,14 +34,15 @@ const CatalogItemCard = memo(function CatalogItemCard({
     : null;
 
   return (
-    <li className="group overflow-hidden rounded-3xl border-[6px] border-white bg-white shadow-[0_15px_40px_rgba(0,0,0,0.12)] sm:border-[8px]">
+    // content-visibility: el navegador no pinta las tarjetas que están fuera de pantalla.
+    <li className="group [contain-intrinsic-size:auto_340px] [content-visibility:auto] overflow-hidden rounded-3xl border-[6px] border-white bg-white shadow-[0_15px_40px_rgba(0,0,0,0.12)] sm:border-[8px]">
       <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-sky-100">
         <img
           src={pexelsSrc(item.photo, 900)}
           srcSet={pexelsSrcSet(item.photo, WIDTHS)}
           sizes="(min-width: 1280px) 22vw, (min-width: 768px) 30vw, 46vw"
           alt={item.alt}
-          loading="lazy"
+          loading={eager ? "eager" : "lazy"}
           decoding="async"
           draggable={false}
           className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -94,8 +99,13 @@ export default function CatalogPage({ show, onClose }: CatalogPageProps) {
   return (
     <motion.div
       className="gpu fixed inset-0 z-50 bg-gradient-to-b from-[#d5effd] via-[#aedcf9] to-[#8cd0f7]"
-      initial={{ y: "100%" }}
-      animate={show ? { y: 0 } : { y: "100%" }}
+      initial={{ y: "100%", visibility: "hidden" }}
+      // Cerrado = oculto de verdad (no se compone ni se pinta).
+      animate={
+        show
+          ? { y: 0, visibility: "visible" }
+          : { y: "100%", transitionEnd: { visibility: "hidden" } }
+      }
       transition={{ type: "spring", damping: 32, stiffness: 220 }}
       aria-hidden={!show}
       inert={!show}
@@ -104,11 +114,11 @@ export default function CatalogPage({ show, onClose }: CatalogPageProps) {
         ref={scrollRef}
         className="no-scrollbar h-full overflow-x-hidden overflow-y-auto overscroll-contain"
       >
-        <header className="sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-2 bg-white/30 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 backdrop-blur-md sm:px-8">
+        <header className="sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] items-center gap-2 bg-[#d5effd]/90 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] pb-3 sm:px-8">
           <button
             type="button"
             onClick={onClose}
-            className="flex w-fit cursor-pointer items-center rounded-full border border-black/20 bg-white/40 px-4 py-2 font-anton text-sm whitespace-nowrap text-black transition-all duration-300 hover:scale-105 hover:border-black/40 active:scale-95 sm:px-6 sm:text-lg"
+            className="flex w-fit cursor-pointer items-center rounded-full border border-black/20 bg-white/65 px-4 py-2 font-anton text-sm whitespace-nowrap text-black transition-all duration-300 hover:scale-105 hover:border-black/40 active:scale-95 sm:px-6 sm:text-lg"
           >
             ← VOLVER
           </button>
@@ -143,7 +153,7 @@ export default function CatalogPage({ show, onClose }: CatalogPageProps) {
                 className={`cursor-pointer rounded-full border px-5 py-2 font-anton text-sm tracking-wider transition-all duration-300 active:scale-95 sm:text-base ${
                   filter === c.id
                     ? "border-black bg-black text-white"
-                    : "border-black/20 bg-white/40 text-black hover:border-black/40"
+                    : "border-black/20 bg-white/65 text-black hover:border-black/40"
                 }`}
               >
                 {c.label}
@@ -152,8 +162,8 @@ export default function CatalogPage({ show, onClose }: CatalogPageProps) {
           </div>
 
           <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 md:grid-cols-3 xl:grid-cols-4">
-            {items.map((item) => (
-              <CatalogItemCard key={item.id} item={item} />
+            {items.map((item, i) => (
+              <CatalogItemCard key={item.id} item={item} eager={i < EAGER_COUNT} />
             ))}
           </ul>
 

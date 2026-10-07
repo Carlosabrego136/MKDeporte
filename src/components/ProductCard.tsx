@@ -1,6 +1,6 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useState } from "react";
 import { motion } from "motion/react";
-import { useHls } from "../hooks/useHls";
+import { useCardVideo } from "../hooks/useCardVideo";
 import {
   pexelsSrc,
   pexelsSrcSet,
@@ -9,10 +9,14 @@ import {
 } from "../constants";
 
 type ProductCardProps = Omit<DeckCardConfig, "itemId"> &
-  Pick<CatalogItem, "name" | "price" | "photo" | "alt">;
+  Pick<CatalogItem, "name" | "price" | "photo" | "alt"> & {
+    /** false mientras otra pantalla (catálogo) está encima: el video se pausa. */
+    videosOn: boolean;
+  };
 
 const SRC_WIDTHS = [600, 900, 1260] as const;
 
+/** Tarjeta del mazo de 3 (escritorio / tablet): hover = video. */
 function ProductCardBase({
   video,
   name,
@@ -23,43 +27,10 @@ function ProductCardBase({
   initialRotation,
   hoverOffset,
   zIndexClass,
+  videosOn,
 }: ProductCardProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [hasActivated, setHasActivated] = useState(false);
-  const [videoOn, setVideoOn] = useState(false);
-
-  // El stream solo se conecta tras el primer hover/toque (carga bajo demanda).
-  const isReady = useHls(videoRef, video, hasActivated);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el || !isReady) return;
-    if (isHovered) {
-      el.play().catch(() => {});
-    } else {
-      el.pause();
-      el.currentTime = 0;
-    }
-  }, [isHovered, isReady]);
-
-  const handleHoverStart = () => {
-    setHasActivated(true);
-    setIsHovered(true);
-  };
-  const handleHoverEnd = () => {
-    setIsHovered(false);
-    setVideoOn(false);
-  };
-
-  // En pantallas táctiles (sin hover) el toque alterna la reproducción.
-  const handleClick = () => {
-    if (window.matchMedia("(hover: none)").matches) {
-      setHasActivated(true);
-      setIsHovered((v) => !v);
-      if (isHovered) setVideoOn(false);
-    }
-  };
+  const { ref, videoOn, onPlaying } = useCardVideo(video, isHovered && videosOn);
 
   return (
     <motion.div
@@ -69,28 +40,27 @@ function ProductCardBase({
         ...hoverOffset,
         transition: { type: "spring", stiffness: 200, damping: 20 },
       }}
-      onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}
-      onClick={handleClick}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
     >
       {/* Foto real HD: siempre visible; el video aparece encima al reproducir */}
       <img
         src={pexelsSrc(photo, 900)}
         srcSet={pexelsSrcSet(photo, SRC_WIDTHS)}
-        sizes="(max-width: 640px) 45vw, 24rem"
+        sizes="(max-width: 1024px) 34vw, 24rem"
         alt={alt}
         decoding="async"
         draggable={false}
         className="pointer-events-none absolute inset-0 h-full w-full rounded-2xl object-cover"
       />
       <video
-        ref={videoRef}
+        ref={ref}
         muted
         loop
         playsInline
         disablePictureInPicture
         preload="none"
-        onPlaying={() => setVideoOn(true)}
+        onPlaying={onPlaying}
         className={`pointer-events-none absolute inset-0 h-full w-full rounded-2xl object-cover transition-opacity duration-500 ${
           videoOn ? "opacity-100" : "opacity-0"
         }`}

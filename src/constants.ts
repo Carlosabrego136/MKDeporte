@@ -18,6 +18,7 @@ export const TEXT = {
   start: ["VER", "COLECCIÓN"],
   back: "VOLVER AL INICIO",
   catalog: "VER CATÁLOGO",
+  skip: "SALTAR ›",
   collection: ["COLECCIÓN", "#451"],
 } as const;
 

@@ -1,10 +1,20 @@
-import { lazy, Suspense, useCallback, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { HeroScreen } from "./components/HeroScreen";
+import { CATALOG, pexelsSrc } from "./constants";
 
 const loadCollection = () => import("./components/CollectionScreen");
 const loadCatalog = () => import("./components/CatalogPage");
 const CollectionScreen = lazy(loadCollection);
 const CatalogPage = lazy(loadCatalog);
+
+/** Deja listas las primeras fotos del catálogo para que abra sin "saltos". */
+function preloadCatalogImages() {
+  CATALOG.slice(0, 4).forEach((item) => {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = pexelsSrc(item.photo, 600);
+  });
+}
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -16,17 +26,33 @@ export default function App() {
 
   const handleStart = useCallback(() => {
     // play() dentro del gesto del usuario: imprescindible en iOS/Safari.
-    videoRef.current?.play().catch(() => {});
-    // Descarga el chunk de la 2ª pantalla mientras corre el video.
-    void loadCollection();
-    setCollectionMounted(true);
+    // Si el navegador lo bloquea, no dejamos al usuario atascado: pasamos a la colección.
+    videoRef.current?.play().catch((err: unknown) => {
+      if (err instanceof DOMException && err.name === "NotAllowedError") {
+        setIsPlaying(false);
+        setShowSecondScreen(true);
+        setCollectionMounted(true);
+      }
+    });
+    void loadCollection(); // solo descarga el código (3 kB); no monta nada todavía
     setIsPlaying(true);
   }, []);
 
+  // La pantalla 2 se monta un poco después de arrancar el video, para no competir
+  // con el inicio del stream (red y CPU del celular).
+  useEffect(() => {
+    if (!isPlaying || collectionMounted) return;
+    const t = window.setTimeout(() => setCollectionMounted(true), 1500);
+    return () => window.clearTimeout(t);
+  }, [isPlaying, collectionMounted]);
+
   const handleEnded = useCallback(() => {
+    videoRef.current?.pause();
+    setCollectionMounted(true);
     setIsPlaying(false);
     setShowSecondScreen(true);
     void loadCatalog(); // precarga el catálogo mientras el usuario ve la colección
+    window.setTimeout(preloadCatalogImages, 800);
   }, []);
 
   const handleBack = useCallback(() => {
@@ -59,6 +85,7 @@ export default function App() {
         <Suspense fallback={null}>
           <CollectionScreen
             show={showSecondScreen}
+            videosOn={showSecondScreen && !showCatalog}
             onBack={handleBack}
             onOpenCatalog={openCatalog}
           />

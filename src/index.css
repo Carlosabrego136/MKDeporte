@@ -77,11 +77,18 @@ body,
   letter-spacing: -0.025em;
 }
 
-.hero-start {
+/* Contenedores centrados (sin translate: el botón puede animar su propio transform). */
+.hero-start,
+.hero-skip {
   position: absolute;
-  left: 50%;
-  translate: -50% 0;
+  left: 0;
+  right: 0;
   z-index: 20;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.hero-start {
   bottom: calc(
     max(var(--pad), env(safe-area-inset-bottom)) + 2 * var(--title) + 1.25rem
   );
@@ -90,6 +97,9 @@ body,
   .hero-start {
     bottom: 0.5rem;
   }
+}
+.hero-skip {
+  bottom: max(var(--pad), env(safe-area-inset-bottom));
 }
 
 /* ---------- PANTALLA 2 ---------- */
@@ -114,8 +124,8 @@ body,
 }
 
 /*
- * Ancho visible del mazo = 3w - 2*solape + 0.48w (por la rotación de ±8°).
- * Escritorio: solape 33% -> 2.82w.  Móvil: solape 60% -> 2.28w.
+ * Mazo de 3 (escritorio/tablet).
+ * Ancho visible = 3w - 2*solape + 0.48w (por la rotación de ±8°) = 2.82w con solape 33%.
  * Se reserva 7.5rem para el desplazamiento al hacer hover.
  */
 .deck {
@@ -133,12 +143,6 @@ body,
   width: 100%;
   height: 100%;
 }
-@media (max-width: 639px) {
-  .deck {
-    --card-w: min(41cqw, calc(76cqh * 0.5625));
-    --overlap: calc(var(--card-w) * 0.6);
-  }
-}
 .deck-card {
   width: var(--card-w);
   flex: none;
@@ -151,6 +155,55 @@ body,
 }
 .deck-card--center {
   scale: 1.05;
+}
+
+/*
+ * Carrusel de celular: una tarjeta grande al centro, las vecinas asoman a los lados.
+ * Ancho = 72% del ancho, o lo que permita el alto (nunca se corta).
+ */
+.carousel {
+  --slide-w: min(72cqw, calc(78cqh * 0.5625));
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4cqw;
+  padding-block: 1.5rem;
+  padding-inline: calc((100cqw - var(--slide-w)) / 2);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+.slide {
+  flex: none;
+  width: var(--slide-w);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  scale: 0.88;
+  opacity: 0.65;
+  transition:
+    scale 0.35s ease,
+    opacity 0.35s ease;
+}
+.slide[data-active="true"] {
+  scale: 1;
+  opacity: 1;
+}
+.carousel-dots {
+  position: absolute;
+  inset-inline: 0;
+  bottom: max(0.5rem, 2cqh);
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* "COLECCIÓN" = 3.93em, "COLECCIÓN #451" = 6.03em en Anton: se ajusta al 94% del ancho. */

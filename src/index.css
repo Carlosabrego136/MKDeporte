@@ -133,16 +133,16 @@ body,
   -webkit-text-stroke: 1.5px #0a2a66;
 }
 .txt-gold {
-  background-image: linear-gradient(180deg, #fffbd0 0%, #ffe14d 28%, #f5a800 54%, #fff0a0 74%, #d98a00 100%);
-  -webkit-text-stroke: 0.045em #5c3a00;
+  background-image: linear-gradient(180deg, #fff8e0 0%, #f8e4a8 40%, #e8c675 72%, #f7e6b4 100%);
+  -webkit-text-stroke: 0.022em #8c6b24;
 }
 .txt-red {
-  background-image: linear-gradient(180deg, #ffa3a3 0%, #ff2a2a 34%, #e00000 58%, #ff6464 78%, #c80000 100%);
-  -webkit-text-stroke: 0.045em #4d0000;
+  background-image: linear-gradient(180deg, #ffe8e5 0%, #ffbab2 40%, #f28f86 72%, #ffd3ce 100%);
+  -webkit-text-stroke: 0.022em #a14540;
 }
 .txt-pink {
-  background-image: linear-gradient(180deg, #ffe0f4 0%, #ff6ec7 36%, #ff2fa8 58%, #ffb8e6 78%, #f0188f 100%);
-  -webkit-text-stroke: 0.045em #6b0036;
+  background-image: linear-gradient(180deg, #fff2f8 0%, #ffcfe5 40%, #f6a6cd 72%, #ffdcee 100%);
+  -webkit-text-stroke: 0.022em #a84c7f;
 }
 
 /* ---------- WHATSAPP ---------- */

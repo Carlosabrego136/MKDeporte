@@ -38,14 +38,19 @@ export default function CollectionScreen({
       }
       transition={{ type: "spring", damping: 32, stiffness: 220 }}
     >
-      <header className="collection-header">
+      <motion.header
+        className="collection-header"
+        initial={false}
+        animate={show ? { opacity: 1, y: 0 } : { opacity: 0, y: -16 }}
+        transition={{ duration: 0.5, delay: show ? 0.6 : 0 }}
+      >
         <button type="button" onClick={onBack} className={BTN}>
           {TEXT.back}
         </button>
         <button type="button" onClick={onOpenCatalog} className={BTN}>
           {TEXT.catalog}
         </button>
-      </header>
+      </motion.header>
 
       <div className="stage select-none">
         <h2 className="giant font-anton bg-gradient-to-b from-white via-white/70 to-white/0 bg-clip-text text-transparent">

@@ -97,7 +97,7 @@ export default function App() {
           <CatalogPage show={showCatalog} onClose={closeCatalog} />
         </Suspense>
       )}
-      <WhatsAppWidget />
+      <WhatsAppWidget visible={showSecondScreen} />
     </main>
   );
 }

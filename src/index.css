@@ -117,40 +117,30 @@ body,
   }
 }
 
-/* ---------- TEXTOS METÁLICOS DEL HERO ---------- */
-.txt-blue,
-.txt-gold,
-.txt-red,
-.txt-pink {
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  paint-order: stroke fill;
-}
-.txt-blue {
-  background-image: linear-gradient(180deg, #f2faff 0%, #8fd0ff 28%, #2f8cff 52%, #c9e8ff 72%, #1f6fe0 100%);
-  -webkit-text-stroke: 1.5px #0a2a66;
-}
-.txt-gold {
-  background-image: linear-gradient(180deg, #fff8e0 0%, #f8e4a8 40%, #e8c675 72%, #f7e6b4 100%);
-  -webkit-text-stroke: 0.022em #8c6b24;
-}
-.txt-red {
-  background-image: linear-gradient(180deg, #ffe8e5 0%, #ffbab2 40%, #f28f86 72%, #ffd3ce 100%);
-  -webkit-text-stroke: 0.022em #a14540;
-}
-.txt-pink {
-  background-image: linear-gradient(180deg, #fff2f8 0%, #ffcfe5 40%, #f6a6cd 72%, #ffdcee 100%);
-  -webkit-text-stroke: 0.022em #a84c7f;
+/* ---------- TEXTOS DEL HERO: blanco brillante ---------- */
+.txt-white {
+  color: #fff;
+  text-shadow:
+    0 0 14px rgb(255 255 255 / 0.55),
+    0 0 2px rgb(255 255 255 / 0.9),
+    0 2px 14px rgb(0 40 20 / 0.55),
+    0 1px 3px rgb(0 30 15 / 0.5);
 }
 
 /* ---------- WHATSAPP ---------- */
 .wa-fab {
   position: fixed;
   z-index: 60;
-  top: max(0.75rem, env(safe-area-inset-top));
-  right: max(0.75rem, env(safe-area-inset-right));
+  bottom: max(0.9rem, env(safe-area-inset-bottom));
+  right: max(0.9rem, env(safe-area-inset-right));
+  opacity: 0;
+  visibility: hidden;
+  translate: 0 1.5rem;
+  transition:
+    opacity 0.5s ease 0.7s,
+    translate 0.5s ease 0.7s,
+    visibility 0s linear 0.7s,
+    scale 0.2s ease;
   width: 3.25rem;
   height: 3.25rem;
   padding: 0;
@@ -159,7 +149,11 @@ body,
   background: none;
   cursor: pointer;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-  transition: scale 0.2s ease;
+}
+.wa-fab[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+  translate: 0 0;
 }
 .wa-fab:hover {
   scale: 1.08;

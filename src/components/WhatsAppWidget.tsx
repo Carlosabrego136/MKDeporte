@@ -24,7 +24,7 @@ function WaLogo({ className }: { className?: string }) {
 const OTHER = "Otra / aún no sé";
 
 /** Botón flotante de WhatsApp + ventanita que pide nombre y prenda y abre el chat con el mensaje. */
-export function WhatsAppWidget() {
+export function WhatsAppWidget({ visible }: { visible: boolean }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [item, setItem] = useState(CATALOG[0]?.name ?? OTHER);
@@ -64,6 +64,8 @@ export function WhatsAppWidget() {
         onClick={() => setOpen(true)}
         aria-label="Escríbenos por WhatsApp"
         className="wa-fab"
+        data-visible={visible}
+        tabIndex={visible ? 0 : -1}
       >
         <WaLogo className="h-full w-full" />
       </button>

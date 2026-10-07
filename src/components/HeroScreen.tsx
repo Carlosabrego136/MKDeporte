@@ -142,7 +142,7 @@ function HeroScreenBase({
           animate={isPlaying ? { y: 250, opacity: 0 } : { y: 0, opacity: 1 }}
           transition={{ duration: 1, ease: EASE_OUT }}
         >
-          <h2 className="font-anton text-xl leading-[0.95] tracking-wide text-white uppercase [text-shadow:0_2px_12px_rgba(0,0,0,0.35)] sm:text-2xl md:text-3xl lg:text-[2.2rem]">
+          <h2 className="txt-blue font-anton text-xl leading-[0.95] tracking-wide uppercase sm:text-2xl md:text-3xl lg:text-[2.2rem]">
             {TEXT.slogan.map((line) => (
               <span key={line} className="block">
                 {line}
@@ -159,9 +159,9 @@ function HeroScreenBase({
             }
             transition={{ duration: 1.1, ease: EASE_OUT }}
           >
-            <h1 className="hero-title font-anton text-left text-white uppercase [text-shadow:0_2px_20px_rgba(0,0,0,0.3)]">
-              <span className="block">{BRAND.left[0]}</span>
-              <span className="block">{BRAND.left[1]}</span>
+            <h1 className="hero-title font-anton text-left uppercase">
+              <span className="txt-gold block w-fit">{BRAND.left[0]}</span>
+              <span className="txt-red block w-fit">{BRAND.left[1]}</span>
             </h1>
           </motion.div>
 
@@ -172,7 +172,7 @@ function HeroScreenBase({
             }
             transition={{ duration: 1.1, ease: EASE_OUT }}
           >
-            <p className="hero-title font-anton text-right text-white uppercase [text-shadow:0_2px_20px_rgba(0,0,0,0.3)]">
+            <p className="txt-pink hero-title font-anton text-right uppercase">
               <span className="block">{BRAND.right[0]}</span>
               <span className="block">{BRAND.right[1]}</span>
             </p>

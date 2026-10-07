@@ -117,6 +117,114 @@ body,
   }
 }
 
+/* ---------- TEXTOS METÁLICOS DEL HERO ---------- */
+.txt-blue,
+.txt-gold,
+.txt-red,
+.txt-pink {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  paint-order: stroke fill;
+}
+.txt-blue {
+  background-image: linear-gradient(180deg, #f2faff 0%, #8fd0ff 28%, #2f8cff 52%, #c9e8ff 72%, #1f6fe0 100%);
+  -webkit-text-stroke: 1.5px #0a2a66;
+}
+.txt-gold {
+  background-image: linear-gradient(180deg, #fffbd0 0%, #ffe14d 28%, #f5a800 54%, #fff0a0 74%, #d98a00 100%);
+  -webkit-text-stroke: 0.045em #5c3a00;
+}
+.txt-red {
+  background-image: linear-gradient(180deg, #ffa3a3 0%, #ff2a2a 34%, #e00000 58%, #ff6464 78%, #c80000 100%);
+  -webkit-text-stroke: 0.045em #4d0000;
+}
+.txt-pink {
+  background-image: linear-gradient(180deg, #ffe0f4 0%, #ff6ec7 36%, #ff2fa8 58%, #ffb8e6 78%, #f0188f 100%);
+  -webkit-text-stroke: 0.045em #6b0036;
+}
+
+/* ---------- WHATSAPP ---------- */
+.wa-fab {
+  position: fixed;
+  z-index: 60;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.9rem;
+  background: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  transition: scale 0.2s ease;
+}
+.wa-fab:hover {
+  scale: 1.08;
+}
+.wa-fab:active {
+  scale: 0.94;
+}
+.wa-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 0.55);
+}
+.wa-modal {
+  width: min(100%, 24rem);
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+}
+.wa-label {
+  margin-top: 0.7rem;
+  font-family: var(--font-anton);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  color: rgb(0 0 0 / 0.6);
+}
+.wa-input {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid rgb(0 0 0 / 0.15);
+  border-radius: 0.9rem;
+  background: #f7f9fb;
+  font-size: 16px; /* evita el zoom automático en iPhone */
+  color: #000;
+  outline: none;
+}
+.wa-input:focus {
+  border-color: #1fb83a;
+}
+.wa-send {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  border: 0;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #3fe05a, #1fb83a);
+  font-family: var(--font-anton);
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  color: #fff;
+  cursor: pointer;
+}
+.wa-send:active {
+  scale: 0.97;
+}
+
 .hero-title {
   font-size: var(--title);
   line-height: 1;

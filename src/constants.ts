@@ -23,7 +23,7 @@ export const TEXT = {
 } as const;
 
 /** Si pones aquí tu número (formato 521XXXXXXXXXX) aparece el botón "PEDIR" en el catálogo. */
-export const WHATSAPP_NUMBER = "";
+export const WHATSAPP_NUMBER = "525568888544";
 
 /* ---------------- Videos / fondo (los del diseño original) ---------------- */
 export const POSTER_URL =

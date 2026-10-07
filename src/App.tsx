@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { HeroScreen } from "./components/HeroScreen";
+import { WhatsAppWidget } from "./components/WhatsAppWidget";
 import { CATALOG, pexelsSrc } from "./constants";
 
 const loadCollection = () => import("./components/CollectionScreen");
@@ -96,6 +97,7 @@ export default function App() {
           <CatalogPage show={showCatalog} onClose={closeCatalog} />
         </Suspense>
       )}
+      <WhatsAppWidget />
     </main>
   );
 }

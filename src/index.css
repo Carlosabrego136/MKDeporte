@@ -71,36 +71,6 @@ body,
   }
 }
 
-/*
- * Celulares verticales: el video ocupa el 80% del alto (centrado) y se funde a negro arriba y
- * abajo. Así se ve más de la escena (menos zoom) sin barras duras. Escritorio/tablet no cambian.
- */
-.hero-fade {
-  display: none;
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 15dvh;
-  z-index: 1;
-  pointer-events: none;
-}
-.hero-fade--top {
-  top: 10dvh;
-  background: linear-gradient(to bottom, #000, transparent);
-}
-.hero-fade--bottom {
-  bottom: 10dvh;
-  background: linear-gradient(to top, #000, transparent);
-}
-@media (max-width: 639px) and (orientation: portrait) {
-  .parallax-layer {
-    inset: 10dvh 0;
-  }
-  .hero-fade {
-    display: block;
-  }
-}
-
 .hero-title {
   font-size: var(--title);
   line-height: 1;

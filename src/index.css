@@ -71,6 +71,52 @@ body,
   }
 }
 
+/*
+ * Celulares verticales: el video es horizontal (16:9) y se recorta a lo ancho. La caja del
+ * video es un 8% más baja (4dvh arriba y abajo) para que se vea un poco más de los lados.
+ * Esas dos tiras muestran el mismo póster del fondo (no negro), con una transición suave.
+ * Escritorio y tablet no cambian.
+ */
+.hero-videobox {
+  position: absolute;
+  inset: 0;
+}
+.hero-feather {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 4.6%,
+    transparent 11%,
+    transparent 89%,
+    #000 95.4%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 4.6%,
+    transparent 11%,
+    transparent 89%,
+    #000 95.4%,
+    #000 100%
+  );
+}
+@media (max-width: 639px) and (orientation: portrait) {
+  .hero-videobox {
+    inset: 4dvh 0;
+  }
+  .hero-feather {
+    display: block;
+  }
+}
+
 .hero-title {
   font-size: var(--title);
   line-height: 1;

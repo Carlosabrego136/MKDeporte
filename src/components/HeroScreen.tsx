@@ -104,6 +104,7 @@ function HeroScreenBase({
           draggable={false}
           className="absolute inset-0 h-full w-full object-cover"
         />
+        <div className="hero-videobox">
         <video
           ref={videoRef}
           poster={POSTER_URL}
@@ -120,6 +121,17 @@ function HeroScreenBase({
           className={`absolute inset-0 h-full w-full origin-center object-cover transition-opacity duration-1000 ease-in-out ${
             hasPlayed ? "opacity-100" : "opacity-0"
           }`}
+        />
+        </div>
+        {/* Solo celular vertical: el mismo póster, visible únicamente en los bordes de la caja
+            del video, para que el video se funda con el fondo sin negro ni sombras. */}
+        <img
+          src={POSTER_URL}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+          draggable={false}
+          className="hero-feather"
         />
       </div>
       <div className="pointer-events-none absolute inset-0 bg-black/10" />
